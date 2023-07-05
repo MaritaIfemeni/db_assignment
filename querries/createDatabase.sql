@@ -11,27 +11,29 @@ CREATE TABLE IF NOT EXISTS public.employees
     hourly_salary numeric,
     title_id integer,
     manager_id integer,
-    team character varying(50) COLLATE pg_catalog."default",
+    team integer,
     CONSTRAINT employees_pkey PRIMARY KEY (employee_id),
     CONSTRAINT fk_employees_manager FOREIGN KEY (manager_id)
         REFERENCES public.employees (employee_id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON DELETE NO ACTION
+        NOT VALID,
     CONSTRAINT fk_employees_team FOREIGN KEY (team)
-        REFERENCES public.teams (team_name) MATCH SIMPLE
+        REFERENCES public.teams (team_id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON DELETE NO ACTION
+        NOT VALID,
     CONSTRAINT fk_employees_title FOREIGN KEY (title_id)
         REFERENCES public.titles (title_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
+        NOT VALID
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.employees
     OWNER to postgres;
-
 -- Table: public.hours_tracking
 
 -- DROP TABLE IF EXISTS public.hours_tracking;
@@ -55,30 +57,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.hours_tracking
     OWNER to postgres;  
-
--- Table: public.hours_tracking
-
--- DROP TABLE IF EXISTS public.hours_tracking;
-
-CREATE TABLE IF NOT EXISTS public.hours_tracking
-(
-    employee_id integer,
-    project_id integer,
-    total_hours integer,
-    CONSTRAINT hours_tracking_employee_id_fkey FOREIGN KEY (employee_id)
-        REFERENCES public.employees (employee_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT hours_tracking_project_id_fkey FOREIGN KEY (project_id)
-        REFERENCES public.projects (project_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.hours_tracking
-    OWNER to postgres;
 
 -- Table: public.projects
 
@@ -133,15 +111,13 @@ CREATE TABLE IF NOT EXISTS public.teams
     team_id integer NOT NULL DEFAULT nextval('teams_team_id_seq'::regclass),
     team_name character varying(50) COLLATE pg_catalog."default",
     location character varying(50) COLLATE pg_catalog."default",
-    CONSTRAINT teams_pkey PRIMARY KEY (team_id),
-    CONSTRAINT unique_team_name UNIQUE (team_name)
+    CONSTRAINT teams_pkey PRIMARY KEY (team_id)
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.teams
     OWNER to postgres;
-
 
 -- Table: public.titles
 
