@@ -13,3 +13,57 @@ JOIN teams t ON tp.team_id = t.team_id
 JOIN employees e ON t.team_id = e.team
 WHERE e.title_id = 2 AND (e.first_name LIKE 'J%' OR e.first_name LIKE 'D%')
 ORDER BY p.project_id;
+
+-- Retrieve all the employees (both directly and indirectly) working under Andrew Martin
+
+WITH RECURSIVE employee_hierarchy AS (
+  SELECT e.employee_id, e.first_name, e.last_name, e.manager_id
+  FROM employees e
+  WHERE e.employee_id IN (
+    SELECT employee_id
+    FROM employees
+    WHERE first_name = 'Andrew' AND last_name = 'Martin'
+  )
+  UNION
+  SELECT e.employee_id, e.first_name, e.last_name, e.manager_id
+  FROM employees e
+  JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT *
+FROM employee_hierarchy
+WHERE employee_id <> (
+  SELECT employee_id
+  FROM employees
+  WHERE first_name = 'Robert' AND last_name = 'Brown'
+);
+
+-- Retrieve all the employees (both directly and indirectly) working under Robert Brown
+
+WITH RECURSIVE employee_hierarchy AS (
+  SELECT e.employee_id, e.first_name, e.last_name, e.manager_id
+  FROM employees e
+  WHERE e.employee_id IN (
+    SELECT employee_id
+    FROM employees
+    WHERE first_name = 'Robert' AND last_name = 'Brown'
+  )
+  UNION
+  SELECT e.employee_id, e.first_name, e.last_name, e.manager_id
+  FROM employees e
+  JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT *
+FROM employee_hierarchy
+WHERE employee_id <> (
+  SELECT employee_id
+  FROM employees
+  WHERE first_name = 'Robert' AND last_name = 'Brown'
+);
+
+-- Retrieve the average hourly salary for each title.
+
+SELECT title_id, AVG(hourly_salary) AS average_hourly_salary
+FROM employees
+GROUP BY title_id;
+
+--- Retrieve the employees who have a higher hourly salary than their respective team's average hourly salary.
