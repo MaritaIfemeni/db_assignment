@@ -13,16 +13,16 @@ CREATE TABLE IF NOT EXISTS public.employees
     CONSTRAINT employees_pkey PRIMARY KEY (employee_id),
     CONSTRAINT fk_employees_manager FOREIGN KEY (manager_id)
         REFERENCES public.employees (employee_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
     CONSTRAINT fk_employees_team FOREIGN KEY (team)
         REFERENCES public.teams (team_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
     CONSTRAINT fk_employees_title FOREIGN KEY (title_id)
         REFERENCES public.titles (title_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 )
 
 TABLESPACE pg_default;
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS public.hour_tracking
     total_hours numeric,
     CONSTRAINT fk_hours_tracking_employee_id FOREIGN KEY (employee_id)
         REFERENCES public.employees (employee_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
     CONSTRAINT fk_hours_tracking_project_id FOREIGN KEY (project_id)
         REFERENCES public.projects (project_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE NO CASCADE
+        ON DELETE SET NULL
 )
 
 TABLESPACE pg_default;
@@ -77,12 +77,12 @@ CREATE TABLE IF NOT EXISTS public.team_project
     project_id integer NOT NULL,
     CONSTRAINT fk_team_project_project_id FOREIGN KEY (project_id)
         REFERENCES public.projects (project_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
     CONSTRAINT fk_team_project_team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 )
 
 TABLESPACE pg_default;
